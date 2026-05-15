@@ -1,16 +1,11 @@
-# 前端依赖和产物
-wiki-rag-web/node_modules/
-wiki-rag-web/dist/
+# 拦截所有目录下的环境配置文件
+**/.env
+**/.env.*
 
-# 后端环境和缓存
-__pycache__/
-*.pyc
-.venv/
-venv/
-
-# 数据库与敏感配置 (最重要！)
-.env
-.env.local
-*.db
-wiki-backend/chroma_v2/
-wiki-backend/data/
+# 拦截数据库和缓存
+**/*.db
+**/chroma_v2/
+**/node_modules/
+**/dist/
+**/__pycache__/
+**/*.pyc
