@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from './views/Home.vue'
 import Article from './views/Article.vue'
+import Monitor from './views/Monitor.vue' // 🚀 新增
 
 const routes = [
-  { path: '/', name: 'home', component: Home },
-  { path: '/article/:id', name: 'article', component: Article, props: true }
+  { path: '/', component: Home },
+  { path: '/article/:id', component: Article },
+  { path: '/monitor', component: Monitor } // 🚀 注册监控页面
 ]
 
-const router = createRouter({
+export default createRouter({
   history: createWebHistory(),
   routes
 })
-
-export default router
