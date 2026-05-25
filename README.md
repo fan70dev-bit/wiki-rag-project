@@ -1,55 +1,243 @@
-# 🚀 Wiki Pro RAG System
-### 维基百科双引擎混合检索与流式 AI 智能研读系统 (Gemini 进化版)
+# Wiki Pro Hybrid RAG System
 
-本系统是一款专为处理海量维基百科数据设计的 **混合检索增强生成 (Hybrid RAG) 系统**。系统核心采用前后端分离架构，通过高效的 **ETL 数据清洗管道** 将分布式 **Kafka** 流式数据流落库，构建了 **“SQLite 精准文本匹配 + ChromaDB 向量语义检索”** 的高性能混合检索双引擎。应用层全面打通了基于阿里云通义千问大模型的 **Server-Sent Events (SSE) 流式打字机响应管道**，支持全文一键智能总结与多轮片段深度研读对话。
+基于 FastAPI + ChromaDB + Kafka 的 Hybrid RAG 智能检索系统，支持关键词检索、向量语义检索与 AI 流式问答。
 
-本项目全面重构为现代 AI 应用主流的 **Gemini 式侧边栏左轴导航布局**，内置纯白极简科技风的 **SaaS 级全链路性能运维监控大屏**，实现了 100% 真实的分布式进程物理流速遥测。作为软件工程/大数据技术课程的优秀期末大作业设计，系统在流处理解耦、高维向量检索、大模型提示词工程等维度均具备完整的准工业级实战参考价值。
-
----
-
-## 🛠️ 技术栈选型 (Technical Stack)
-
-* **前端应用 (Frontend)**：Vue 3 (Composition API) + Vite + Vue Router 4 (多页面路由切换) + TailwindCSS (响应式 UI 体系) + Tailwind Typography (`marked` 实时富文本渲染) + Vue-i18n (中日双语全局国际化字典) + ECharts 5.5 (数据流性能监控可视化)
-* **后端应用 (Backend)**：FastAPI (Python 高性能异步 Web 框架) + Uvicorn (ASGI 服务器) + `python-dotenv` (准生产级环境隔离配置管理)
-* **分布式消息层 (Message Queue)**：Apache Kafka (处理维基百科海量流式高吞吐输入，实现架构层面的彻底解耦)
-* **双引擎数据库层 (Hybrid Databases)**：
-    * **关系型结构化存储**：SQLite 3 (支持毫秒级高频精准 `LIKE` 模糊匹配、全文存储与 ID 快速索引)
-    * **非结构化向量存储**：ChromaDB (持久化本地向量库，用于存储及查询 384 维 BGE 语义嵌入向量)
-* **文本向量化算法 (Embedding Model)**：`BAAI/bge-small-zh-v1.5` (离线高精度的中文语义表示归一化)
-* **大模型生成引擎 (LLM Engine)**：Alibaba Cloud DashScope (阿里云通义千问 `qwen-plus` 商业级大模型，开启 `stream=True` 管道)
+项目主要用于实践 RAG（检索增强生成）、异步消息队列、向量数据库、大模型 API 集成与前后端分离开发等工程能力。
 
 ---
 
-## 📂 项目目录结构 (Project Structure)
+# Features
+
+- Hybrid RAG 混合检索
+  - SQLite 关键词检索
+  - ChromaDB 向量语义检索
+
+- AI 智能问答
+  - 支持 SSE 流式响应
+  - 支持文章总结与上下文问答
+
+- Kafka 异步数据处理
+  - 数据清洗
+  - 文本向量化
+  - 向量入库流程
+
+- 前后端分离架构
+  - Vue3 + FastAPI
+  - RESTful API
+
+- 系统监控页面
+  - 检索耗时统计
+  - 吞吐量监控
+  - 请求状态监控
+
+- Docker 容器化部署
+- Linux 云服务器部署
+
+---
+
+# Tech Stack
+
+## Backend
+
+- FastAPI
+- Python
+- SQLite
+- Kafka
+- ChromaDB
+- Uvicorn
+
+## Frontend
+
+- Vue3
+- Vite
+- TailwindCSS
+- Vue Router
+- ECharts
+
+## AI
+
+- BAAI/bge-small-zh-v1.5
+- DashScope Qwen API
+- SSE Streaming
+
+## Deployment
+
+- Docker Compose
+- Linux Server
+
+---
+
+# Architecture
+
+```text
+User Query
+   │
+   ▼
+Hybrid Retrieval
+ ├── SQLite Keyword Search
+ └── ChromaDB Semantic Search
+   │
+   ▼
+Context Merge
+   │
+   ▼
+Qwen LLM API
+   │
+   ▼
+SSE Streaming Response
+```
+
+---
+
+# Project Structure
 
 ```text
 wiki-rag-project/
-├── .gitignore                  # Git 全局保镖（排除数据库、依赖包与私密环境配置）
-├── README.md                   # 项目核心技术文档
 │
-├── wiki-backend/               # 🐍 Python 后端系统根目录
-│   ├── .env                    # 后端私密环境变量配置（包含 API Key 与本地路径，不上传 GitHub）
-│   ├── main.py                 # 后端主程序入口（全量路由挂载与 CORS 跨域中央件配置）
-│   ├── ingest_v2.py            # 分布式 Kafka 真实流速遥测驱动的入库与向量化落库脚本
+├── wiki-backend/
+│   ├── main.py
+│   ├── ingest_v2.py
 │   ├── core/
-│   │   └── config.py           # 环境变量中央加载器
 │   ├── database/
-│   │   └── manager.py          # 双引擎数据库联合管理器
 │   └── routers/
-│       ├── search.py           # 精准/语义混合搜索路由模块（集成性能耗时打点反馈）
-│       ├── ai_agent.py         # 智能大模型研读 Agent 路由（支持 SSE 协议流式文本生成）
-│       └── monitor.py          # 🚀 运维监控统计接口（打通 /tmp 文件桥梁实现真实吞吐审计）
+│       ├── search.py
+│       ├── ai_agent.py
+│       └── monitor.py
 │
-└── wiki-rag-web/               # ⚡ Vue 3 前端系统根目录
-    ├── .env                    # 前端局部环境变量（控制 API 请求基准地址，不上传 GitHub）
-    ├── package.json            # 前端项目依赖与构建脚本配置
-    ├── vite.config.js          # Vite 构建核心配置
-    └── src/
-        ├── main.js             # 前端主入口（集成中日双语监控中心字典包）
-        ├── App.vue             # 🚀 根骨架组件（重构为固定左侧淡蓝侧边栏导航 + 右侧主渲染视窗）
-        ├── router.js           # Vue Router 4 核心路由拦截分配器
-        ├── style.css           # 全局样式
-        └── views/
-            ├── Home.vue        # 搜索主页面（集成精准/语义选择器、⏱️耗时监控组件及结果分页）
-            ├── Article.vue     # 沉浸式阅读与 AI 智能助页面（集成左侧长文、底部总结与右侧黑色 Copilot 对话框）
-            └── Monitor.vue     # 🚀 系统数据大屏（纯白全屏极简看板，高动态实时渲染延迟、吞吐与分类指标）
+└── wiki-rag-web/
+    ├── src/
+    │   ├── views/
+    │   ├── router/
+    │   ├── components/
+    │   └── utils/
+    │
+    ├── package.json
+    └── vite.config.js
+```
+
+---
+
+# Quick Start
+
+## Backend
+
+进入后端目录：
+
+```bash
+cd wiki-backend
+```
+
+安装依赖：
+
+```bash
+pip install -r requirements.txt
+```
+
+启动服务：
+
+```bash
+python main.py
+```
+
+---
+
+## Frontend
+
+进入前端目录：
+
+```bash
+cd wiki-rag-web
+```
+
+安装依赖：
+
+```bash
+npm install
+```
+
+启动开发服务器：
+
+```bash
+npm run dev
+```
+
+---
+
+# Database
+
+项目采用 Hybrid RAG 双检索结构：
+
+- SQLite
+  - 用于关键词精确检索
+  - 存储结构化文本数据
+
+- ChromaDB
+  - 用于向量语义检索
+  - 存储文本 Embedding
+
+Kafka 用于异步数据处理与向量化流程解耦。
+
+---
+
+# AI Workflow
+
+```text
+Wikipedia Data
+      │
+      ▼
+Kafka Queue
+      │
+      ▼
+Text Cleaning
+      │
+      ▼
+Embedding Generation
+      │
+      ▼
+ChromaDB Storage
+      │
+      ▼
+Hybrid Retrieval
+      │
+      ▼
+Qwen API Response
+```
+
+---
+
+# Screenshots
+
+## Home Page
+
+![Home Page](./docs/images/home.png)
+
+---
+
+## AI Chat
+
+![AI Chat](./docs/images/ai-chat.png)
+
+---
+
+## Monitor Dashboard
+
+![Monitor Dashboard](./docs/images/monitor-dashboard.png)
+
+---
+
+# Future Plans
+
+- 多轮上下文记忆
+- 搜索结果排序优化
+- 模型切换支持
+- 移动端适配
+- 用户系统
+
+---
+
+# Author
+
+Fan Fengdian
+
+GitHub:
+https://github.com/fan70dev-bit
